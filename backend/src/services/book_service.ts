@@ -1,8 +1,9 @@
 import { Book } from "../models/book";
 
-export const createBook = async (data: any) => {
+export const createBook = async (data: any,image:string) => {
   return await Book.create({
     ...data,
+    image,
     status: "AVAILABLE",
   });
 };

@@ -17,10 +17,7 @@ mongoConnect();
 
 //route
 app.use("/api",router)
-app.get("/test", (req, res) => {
-  console.log("istek geldi");
-  res.send("çalışıyor");
-});
+app.use("/uploads",express.static("uploads"))
 
 app.listen(env.port,()=>{
     console.log(`sunucu çalışıyor portu:  http://localhost:${env.port} `)

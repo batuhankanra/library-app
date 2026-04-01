@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as bookController from "../controllers/book_controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { requireRole } from "../middlewares/role";
+import { upload } from "../config/multer";
 
 const router = Router();
 
@@ -12,6 +13,7 @@ router.post(
   "/",
   authMiddleware,
   requireRole("admin"),
+  upload.single("image"),
   bookController.create
 );
 

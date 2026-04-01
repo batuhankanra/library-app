@@ -3,7 +3,9 @@ import * as bookService from "../services/book_service";
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const book = await bookService.createBook(req.body);
+    let img=req.file?.filename;
+    img=img ? `/uploads/${img}` : ""
+    const book = await bookService.createBook(req.body,img);
     res.status(201).json(book);
   } catch (error: any) {
     res.status(400).json({ message: error.message });

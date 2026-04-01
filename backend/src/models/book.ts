@@ -7,6 +7,7 @@ export interface IBook extends mongoose.Document {
   author: string;
   isbn: string;
   status: BookStatus;
+  image:string;
 }
 
 const bookSchema = new mongoose.Schema(
@@ -19,6 +20,7 @@ const bookSchema = new mongoose.Schema(
       enum: ["AVAILABLE", "BORROWED", "NOT_AVAILABLE"],
       default: "AVAILABLE",
     },
+    image: { type: String, default: "" },
   },
   { timestamps: true }
 );

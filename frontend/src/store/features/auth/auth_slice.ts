@@ -1,10 +1,9 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import api from "../../../services/axios";
-import type { AuthState, LoginPayload } from "./types";
-import  type { User } from "../../../types";
+import type { AuthState, LoginPayload, LoginResponse } from "./types";
 
 export const login = createAsyncThunk<
-  User,            
+  LoginResponse,            
   LoginPayload,    
   { rejectValue: string }
 >("auth/login", async (data, thunkAPI) => {
@@ -35,10 +34,12 @@ const authSlice = createSlice({
       .addCase(login.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(login.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload;
-      })
+      .addCase(login.fulfilled, (state, action: PayloadAction<LoginResponse>) => {
+  state.isLoading = false;
+  state.user = action.payload.user;
+
+  localStorage.setItem("token", action.payload.token);
+})
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Error";

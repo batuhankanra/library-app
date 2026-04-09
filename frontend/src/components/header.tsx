@@ -10,12 +10,10 @@ const Navbar = () => {
     <header className="bg-primary text-white shadow-md">
       <div className="flex items-center justify-between max-w-6xl mx-auto px-6 py-4">
 
-        {/* Logo */}
         <Link to="/" className="text-xl font-bold whitespace-nowrap">
           📚 Yağmur Kalp
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-6 items-center font-semibold text-lg">
           {menu.map((item) => (
             <NavLink
@@ -32,7 +30,6 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Search (Desktop) */}
         <div className="hidden md:block flex-1 max-w-xs mx-4">
           <input
             type="text"
@@ -41,7 +38,6 @@ const Navbar = () => {
           />
         </div>
 
-        {/* Right Side */}
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <>
@@ -60,7 +56,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Hamburger */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden flex flex-col gap-1"
@@ -83,7 +78,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <div
         className={`md:hidden bg-secondary px-6 overflow-hidden transition-all duration-300 ${
           isOpen ? "max-h-96 py-4" : "max-h-0"
@@ -106,7 +100,6 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Search Mobile */}
         <div className="mt-4">
           <input
             type="text"

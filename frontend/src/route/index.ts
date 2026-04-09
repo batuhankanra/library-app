@@ -5,6 +5,7 @@ import MainLayout from "../layout";
 import Login from "../pages/login";
 import Register from "../pages/register";
 import NotFound from "../pages/not_found";
+import Home from "../pages/home";
 
 
 const router =createBrowserRouter([
@@ -14,7 +15,7 @@ const router =createBrowserRouter([
         children:[
             {
                 index:true,
-                element:"sa"
+                Component:Home
             },
             {
                 path:"/*",
@@ -27,6 +28,7 @@ const router =createBrowserRouter([
     {
         path:"/login",
         Component:Login
+        
     },
     {
         path:"/register",

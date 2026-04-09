@@ -3,7 +3,12 @@ import type { User } from "../../../types";
 export interface AuthState {
   user: User | null;
   isLoading: boolean;
-  error: string | null;
+  error: any;
+}
+export interface LoginResponse{
+   message:string,
+  token:string,
+  user:User;
 }
 
 export interface LoginPayload {

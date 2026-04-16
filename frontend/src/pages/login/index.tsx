@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/app_hook" 
-import { login } from "../../store/features/auth/auth_slice"; 
-import { useNavigate } from "react-router"; 
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../store/app_hook";
+import { getMe, login } from "../../store/features/auth/auth_slice";
+import { useNavigate } from "react-router";
+import Loading from "../../components/loading";
 
 const Login = () => {
+  const [success, setSuccess] = useState(false);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -11,14 +13,23 @@ const Login = () => {
   const { isLoading, error, user } = useAppSelector(
     (state) => state.auth_slice
   );
-  if (user){
-    return navigate("/")
-  }
-  
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
+  // 🔥 Sayfa açılınca auth kontrolü
+  useEffect(() => {
+    dispatch(getMe());
+  }, []);
+
+  // 🔥 user varsa anasayfaya yönlendir
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate("/");
+    }
+  }, [user, isLoading]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
@@ -33,16 +44,22 @@ const Login = () => {
     const result = await dispatch(login(form));
 
     if (login.fulfilled.match(result)) {
-      navigate("/");
+      setSuccess(true);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     }
   };
-  console.log(user)
+
+  if (isLoading && !success) {
+    return <Loading />
+  }
+  
 
   return (
     <div className="flex items-center justify-center min-h-[70vh] px-4">
-      
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow">
-        
         <h1 className="text-2xl font-bold mb-6 text-center">
           Giriş Yap
         </h1>
@@ -50,13 +67,19 @@ const Login = () => {
         {/* ERROR */}
         {error && (
           <div className="mb-4 text-sm text-red-500 bg-red-50 p-2 rounded">
-            {error.message}
+            {typeof error === "string" ? error : "Hata oluştu"}
+          </div>
+        )}
+
+        {/* SUCCESS */}
+        {success && (
+          <div className="mb-4 text-green-600 bg-green-50 p-2 rounded text-sm">
+            Giriş başarılı! Yönlendiriliyorsunuz...
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           
-          {/* EMAIL */}
           <div>
             <label className="block text-sm mb-1">Email</label>
             <input
@@ -69,7 +92,6 @@ const Login = () => {
             />
           </div>
 
-          {/* PASSWORD */}
           <div>
             <label className="block text-sm mb-1">Şifre</label>
             <input
@@ -82,7 +104,6 @@ const Login = () => {
             />
           </div>
 
-          {/* BUTTON */}
           <button
             type="submit"
             disabled={isLoading}
@@ -96,7 +117,6 @@ const Login = () => {
             {isLoading ? "Giriş yapılıyor..." : "Giriş Yap"}
           </button>
         </form>
-
       </div>
     </div>
   );

@@ -52,13 +52,11 @@ export const getMyProfile = async (req: any, res: Response) => {
       return res.status(404).json({ message: "Kullanıcı bulunamadı" });
     }
 
-    // 🔍 aktif borrowlar
     const activeBorrows = await Borrow.find({
       userId,
       returnDate: null,
     }).populate("bookId");
 
-    // 📚 geçmiş borrowlar
     const history = await Borrow.find({
       userId,
       returnDate: { $ne: null },

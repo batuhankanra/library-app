@@ -28,6 +28,7 @@ export const register = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
      if (!name ||!email || !password){
         res.status(400).json({"msg":"empty"})
+        return
     }
     const data = await registerUser(name,email, password);
 

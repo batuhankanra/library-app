@@ -93,7 +93,11 @@ const Navbar = () => {
               </div>
               {open && (
                 <div className="absolute -right-10 mt-2 w-44 bg-zinc-700 border rounded-xl shadow-lg py-2 z-50">
-                  
+                  {user.role==="admin" && (
+                    <Link to={"/admin"} className="w-full text-left px-4 py-2 text-sm hover:text-black transition-all cursor-pointer hover:text-base duration-200">
+                    Yönetim bölümü
+                  </Link>
+                  )}
                   <button className="w-full text-left px-4 py-2 text-sm hover:text-black transition-all cursor-pointer hover:text-base duration-200">
                     Profil
                   </button>

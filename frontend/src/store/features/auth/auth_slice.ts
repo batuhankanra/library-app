@@ -6,16 +6,25 @@ interface User {
   _id: string;
   name: string;
   email: string;
+  role: string;
 }
 
 interface LoginPayload {
   email: string;
   password: string;
 }
+interface RegisterPayload{
+  name:string
+  email:string
+  password:string
+}
 
 interface AuthResponse {
   user: User;
   token: string;
+}
+interface RegisterResponse{
+  message:string
 }
 
 interface AuthState {
@@ -47,9 +56,21 @@ export const login = createAsyncThunk<
     );
   }
 });
+export const register_thunk = createAsyncThunk<
+  RegisterResponse,
+  RegisterPayload,
+  { rejectValue: string }
+>("auth/register", async (data, thunkAPI) => {
+  try {
+    const res = await api.post("/auth/register", data);
+    return res.data;
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue(
+      err.response?.data || "Register failed"
+    );
+  }
+});
 
-
-// 🔥 GET ME (token kontrol)
 export const getMe = createAsyncThunk<
   User,
   void,
@@ -116,6 +137,19 @@ const authSlice = createSlice({
 
         // 🔥 TOKEN GEÇERSİZ → SİL
         localStorage.removeItem("token");
+      })
+
+      .addCase(register_thunk.rejected,(state,action:any)=>{
+        state.isLoading=false;
+        state.error=action.payload.message
+      })
+      .addCase(register_thunk.pending,(state)=>{
+        state.isLoading=true;
+      })
+      .addCase(register_thunk.fulfilled,(state)=>{
+        state.isLoading=false;
+        state.error=null
+
       });
   },
 });

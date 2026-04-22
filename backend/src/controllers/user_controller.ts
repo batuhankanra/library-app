@@ -51,3 +51,21 @@ export const updateUserByAdmin = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Kullanıcı bulunamadı" });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res.json({ message: "Kullanıcı silindi" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

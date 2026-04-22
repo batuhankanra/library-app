@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { getUser, updateUserByAdmin } from "../controllers/admin.controller";
+import { deleteUser, getUser, updateUserByAdmin } from "../controllers/user_controller";
 import { requireRole } from "../middlewares/role";
 
 const router = Router();
@@ -17,5 +17,10 @@ router.patch(
   requireRole("admin"),
   updateUserByAdmin
 );
-
+router.delete(
+  "/users/:id",
+  authMiddleware,
+  requireRole("admin"),
+  deleteUser
+)
 export default router;

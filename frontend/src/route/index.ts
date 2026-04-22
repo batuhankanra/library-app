@@ -10,6 +10,9 @@ import AdminLayout from "../admin/layout";
 import AdminHome from "../admin/page/home";
 import Books from "../pages/books";
 import BookDetail from "../pages/books/detail_book";
+import AdminBook from "../admin/page/book";
+import AddBook from "../admin/page/book/book_add";
+import EditBook from "../admin/page/book/book_edit";
 
 const router =createBrowserRouter([
     {
@@ -55,7 +58,23 @@ const router =createBrowserRouter([
             },
             {
                 path:"book",
-                element:"ss"
+                Component:AdminBook
+            },
+            {
+                path:"add-book",
+                Component:AddBook
+            },
+            {
+                path:"edit-book/:id",
+                Component:EditBook
+            },
+            {
+                path:"user",
+                element:"user"
+            },
+            {
+                path:"borrow",
+                element:"borrow"
             }
         ]
     }

@@ -3,7 +3,7 @@ import * as adminService from "../services/admin_service";
 import { User } from "../models/user";
 
 
-export const getDashboard = async (req: any, res: Response) => {
+export const getUser = async (req: any, res: Response) => {
   try {
     const data = await adminService.getUsersWithPenalties();
 

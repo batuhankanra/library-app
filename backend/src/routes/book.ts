@@ -21,6 +21,8 @@ router.put(
   "/:id",
   authMiddleware,
   requireRole("admin"),
+  upload.single("image"),
+
   bookController.update
 );
 
@@ -28,6 +30,7 @@ router.delete(
   "/:id",
   authMiddleware,
   requireRole("admin"),
+  
   bookController.remove
 );
 

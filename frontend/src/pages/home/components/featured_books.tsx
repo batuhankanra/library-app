@@ -1,53 +1,6 @@
 import {  useRef, useState } from "react";
-import type { Book } from "../../../types";
+import { useAppSelector } from "../../../store/app_hook";
 
-const books: Book[] = [
-  {
-    _id: "1",
-    title: "1984",
-    author: "George Orwell",
-  },
-  {
-    _id: "2",
-    title: "Sefiller",
-    author: "Victor Hugo",
-  },
-  {
-    _id: "3",
-    title: "Suç ve Ceza",
-    author: "Dostoyevski",
-  },
-  {
-    _id: "4",
-    title: "Simyacı",
-    author: "Paulo Coelho",
-  },
-  {
-    _id: "5",
-    title: "Dune",
-    author: "Frank Herbert",
-  },
-  {
-    _id: "6",
-    title: "Dune",
-    author: "Frank Herbert",
-  },
-  {
-    _id: "5",
-    title: "Dune",
-    author: "Frank Herbert",
-  },
-  {
-    _id: "5",
-    title: "Dune",
-    author: "Frank Herbert",
-  },
-  {
-    _id: "5",
-    title: "Dune",
-    author: "Frank Herbert",
-  },
-];
 
 const FeaturedBooks = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,7 +8,10 @@ const FeaturedBooks = () => {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
-  // Mouse drag start
+  const { books } = useAppSelector(
+        (state) => state.book_slice
+      );
+
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDown(true);
     setStartX(e.pageX - (containerRef.current?.offsetLeft || 0));
@@ -79,7 +35,7 @@ const FeaturedBooks = () => {
 
   return (
     <div className="space-y-4 border p-2 rounded-lg border-zinc-300">
-      <h2 className="text-xl font-bold">🆕 Yeni Eklenen Kitaplar</h2>
+      <h2 className="text-xl font-bold">Beğenilen Kitaplar</h2>
 
       <div
         ref={containerRef}

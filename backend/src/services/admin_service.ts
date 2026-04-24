@@ -31,3 +31,10 @@ export const getUsersWithPenalties = async () => {
 
   return result;
 };
+
+export const getUserOne=async (id:string)=>{
+  const user_one=await User.findOne({
+    "_id":id
+  })
+  return user_one
+}

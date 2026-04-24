@@ -2,50 +2,88 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import api from "../../../services/axios";
 
-// 🔹 TYPE
 export interface User {
   _id: string;
   name: string;
   email: string;
   role: "user" | "admin";
+
+  // stats
+  activeBorrows: number;
+  lateBorrows: number;
+  penaltyPoints: number;
+  debt: number;
+
   createdAt?: string;
+}
+
+// 🔹 BACKEND RESPONSE
+interface UsersResponse {
+  totalUsers: number;
+  users: {
+    user: {
+      _id: string;
+      name: string;
+      email: string;
+      role: "user" | "admin";
+      createdAt: string;
+    };
+    stats: {
+      activeBorrows: number;
+      lateBorrows: number;
+      penaltyPoints: number;
+      debt: number;
+    };
+  }[];
 }
 
 // 🔹 STATE
 interface UserState {
   users: User[];
+  totalUsers: number;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: UserState = {
   users: [],
+  totalUsers: 0,
   isLoading: false,
   error: null,
 };
 
-// 🔥 GET USERS
+// 🔥 GET USERS (FLATTEN)
 export const getUsers = createAsyncThunk<
-  User[],
+  { users: User[]; totalUsers: number },
   void,
   { rejectValue: string }
->("user/getUsers", async (_, thunkAPI) => {
+>("users/getUser", async (_, thunkAPI) => {
   try {
-    const res = await api.get("/users");
-    return res.data;
+    const res = await api.get<UsersResponse>("/user");
+
+    // 🔥 flatten
+    const formattedUsers: User[] = res.data.users.map((item) => ({
+      ...item.user,
+      ...item.stats,
+    }));
+
+    return {
+      users: formattedUsers,
+      totalUsers: res.data.totalUsers,
+    };
   } catch {
     return thunkAPI.rejectWithValue("Kullanıcılar alınamadı");
   }
 });
 
-// 🔥 DELETE USER
+// 🔥 DELETE
 export const deleteUser = createAsyncThunk<
   string,
   string,
   { rejectValue: string }
 >("user/deleteUser", async (id, thunkAPI) => {
   try {
-    await api.delete(`/users/${id}`);
+    await api.delete(`/user/${id}`);
     return id;
   } catch {
     return thunkAPI.rejectWithValue("Kullanıcı silinemedi");
@@ -59,14 +97,15 @@ export const updateUserRole = createAsyncThunk<
   { rejectValue: string }
 >("user/updateUserRole", async ({ id, role }, thunkAPI) => {
   try {
-    const res = await api.put(`/users/${id}`, { role });
+    const res = await api.patch(`/user/${id}`, { role });
+
+    // backend sadece user dönüyorsa stats korunmalı
     return res.data;
   } catch {
     return thunkAPI.rejectWithValue("Rol güncellenemedi");
   }
 });
 
-// 🔹 SLICE
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -78,10 +117,17 @@ const userSlice = createSlice({
       .addCase(getUsers.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getUsers.fulfilled, (state, action: PayloadAction<User[]>) => {
-        state.isLoading = false;
-        state.users = action.payload;
-      })
+      .addCase(
+        getUsers.fulfilled,
+        (
+          state,
+          action: PayloadAction<{ users: User[]; totalUsers: number }>
+        ) => {
+          state.isLoading = false;
+          state.users = action.payload.users;
+          state.totalUsers = action.payload.totalUsers;
+        }
+      )
       .addCase(getUsers.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Hata";
@@ -92,6 +138,7 @@ const userSlice = createSlice({
         state.users = state.users.filter(
           (u) => u._id !== action.payload
         );
+        state.totalUsers -= 1;
       })
 
       // UPDATE ROLE
@@ -101,7 +148,10 @@ const userSlice = createSlice({
         );
 
         if (index !== -1) {
-          state.users[index] = action.payload;
+          state.users[index] = {
+            ...state.users[index],
+            ...action.payload, // role update
+          };
         }
       });
   },

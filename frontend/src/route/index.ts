@@ -13,6 +13,8 @@ import BookDetail from "../pages/books/detail_book";
 import AdminBook from "../admin/page/book";
 import AddBook from "../admin/page/book/book_add";
 import EditBook from "../admin/page/book/book_edit";
+import AdminUsers from "../admin/page/user";
+import EditUser from "../admin/page/user/edit";
 
 const router =createBrowserRouter([
     {
@@ -70,7 +72,11 @@ const router =createBrowserRouter([
             },
             {
                 path:"user",
-                element:"user"
+                Component:AdminUsers
+            },
+            {
+                path:"user-edit/:id",
+                Component:EditUser
             },
             {
                 path:"borrow",

@@ -15,7 +15,18 @@ export const getUser = async (req: any, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getUserOne = async (req: any, res: Response) => {
+  try {
+    const id=req.params.id as string
+    const data = await adminService.getUserOne(id);
 
+    res.json({
+      users: data,
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
 export const updateUserByAdmin = async (req: Request, res: Response) => {

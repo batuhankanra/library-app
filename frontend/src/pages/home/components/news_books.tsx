@@ -23,7 +23,7 @@ const NewBooks = () => {
      
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           {sortedBooks.map((book) => (
-            <Card _id={book._id} key={book._id}  author={book.author} title={book.title} description={book.isbn}  />
+            <Card book={book} key={book._id}    />
           ))}
         </div>
     </section>

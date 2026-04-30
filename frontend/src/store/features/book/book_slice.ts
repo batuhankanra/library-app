@@ -17,17 +17,19 @@ export interface Book {
 // 🔹 STATE
 interface BookState {
   books: Book[];
+  selectedBook: Book | null; // 🔥 EKLEDİK
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: BookState = {
   books: [],
+  selectedBook: null,
   isLoading: false,
   error: null,
 };
 
-// 🔥 GET
+// 🔥 GET ALL
 export const getBooks = createAsyncThunk<
   Book[],
   void,
@@ -38,6 +40,20 @@ export const getBooks = createAsyncThunk<
     return res.data;
   } catch {
     return thunkAPI.rejectWithValue("Kitaplar alınamadı");
+  }
+});
+
+// 🔥 GET ONE
+export const getOneBook = createAsyncThunk<
+  Book,
+  string,
+  { rejectValue: string }
+>("book/getOneBook", async (id, thunkAPI) => {
+  try {
+    const res = await api.get(`/book/${id}`);
+    return res.data;
+  } catch {
+    return thunkAPI.rejectWithValue("Kitap alınamadı");
   }
 });
 
@@ -87,11 +103,15 @@ export const updateBook = createAsyncThunk<
 const bookSlice = createSlice({
   name: "book",
   initialState,
-  reducers: {},
+  reducers: {
+    clearSelectedBook: (state) => {
+      state.selectedBook = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
 
-      // GET
+      // GET ALL
       .addCase(getBooks.pending, (state) => {
         state.isLoading = true;
       })
@@ -100,6 +120,19 @@ const bookSlice = createSlice({
         state.books = action.payload;
       })
       .addCase(getBooks.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Hata";
+      })
+
+      // 🔥 GET ONE (DOĞRU)
+      .addCase(getOneBook.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getOneBook.fulfilled, (state, action: PayloadAction<Book>) => {
+        state.isLoading = false;
+        state.selectedBook = action.payload; // ✅ burası kritik
+      })
+      .addCase(getOneBook.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Hata";
       })
@@ -116,7 +149,7 @@ const bookSlice = createSlice({
         );
       })
 
-      // 🔥 UPDATE
+      // UPDATE
       .addCase(updateBook.fulfilled, (state, action: PayloadAction<Book>) => {
         const index = state.books.findIndex(
           (b) => b._id === action.payload._id
@@ -125,8 +158,14 @@ const bookSlice = createSlice({
         if (index !== -1) {
           state.books[index] = action.payload;
         }
+
+        // 🔥 detay sayfası da güncellensin
+        if (state.selectedBook?._id === action.payload._id) {
+          state.selectedBook = action.payload;
+        }
       });
   },
 });
 
+export const { clearSelectedBook } = bookSlice.actions;
 export default bookSlice.reducer;

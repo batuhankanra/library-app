@@ -130,7 +130,7 @@ const AdminBorrow = () => {
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-lg text-sm transition ${
               filter === "all"
-                ? "bg-black text-white"
+                 ? "bg-yellow-500 text-white"
                 : "bg-gray-100 hover:bg-gray-200"
             }`}
           >

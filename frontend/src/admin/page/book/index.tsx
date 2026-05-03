@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../../store/app_hook";
 
@@ -13,6 +13,7 @@ const AdminBook = () => {
   const { books, isLoading, error } = useAppSelector(
     (state) => state.book_slice
   );
+   const [search, setSearch] = useState("");
 
   // 🔥 DATE FORMAT
   const formatDate = (date: string) => {
@@ -58,7 +59,16 @@ const AdminBook = () => {
       </div>
     );
   }
+ // 🔎 FILTER LOGIC
+  const filteredBooks = books.filter((book) => {
+    const q = search.toLowerCase();
 
+    return (
+      book.title.toLowerCase().includes(q) ||
+      book.author.toLowerCase().includes(q) ||
+      book.isbn.toLowerCase().includes(q)
+    );
+  });
   return (
     <div className="space-y-6">
 
@@ -74,7 +84,14 @@ const AdminBook = () => {
             Toplam kitap: {books.length}
           </p>
         </div>
-
+        {/* 🔎 SEARCH */}
+        <input
+          type="text"
+          placeholder="Kitap, yazar veya ISBN ara..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border px-4 py-2 rounded-xl w-full md:w-72 outline-none focus:ring-2 focus:ring-blue-300"
+        />
         <Link
           to="/admin/add-book"
           className="bg-blue-500 text-white px-5 py-2.5 rounded-xl text-sm hover:bg-blue-600 transition"
@@ -105,7 +122,7 @@ const AdminBook = () => {
           </thead>
 
           <tbody>
-            {books.map((book) => (
+            {filteredBooks.map((book) => (
               <tr
                 key={book._id}
                 className="border-t hover:bg-gray-50 transition"

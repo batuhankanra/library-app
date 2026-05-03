@@ -6,6 +6,7 @@ import {
   deleteUser,
   updateUserRole,
   resetUserScore,
+  type User,
 } from "../../../store/features/user/user_slice";
 
 const AdminUsers = () => {
@@ -50,13 +51,13 @@ const AdminUsers = () => {
   };
 
   // 🔥 RESET SCORE
-  const handleResetScore = (id: string) => {
+  const handleResetScore = (user:User) => {
     const ok = window.confirm(
-      "Kullanıcının  puanı sıfırlansın mı?"
+      `Kullanıcının  puanı sıfırlansın mı? (alınacak ödeme ${user.score*10}TL)`
     );
 
     if (ok) {
-      dispatch(resetUserScore(id));
+      dispatch(resetUserScore(user._id));
     }
   };
 
@@ -167,7 +168,7 @@ const AdminUsers = () => {
                     {user.score < 0 && (
                       <button
                         onClick={() =>
-                          handleResetScore(user._id)
+                          handleResetScore(user)
                         }
                         className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 transition"
                       >

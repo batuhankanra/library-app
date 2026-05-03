@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as adminService from "../services/admin_service";
 import { User } from "../models/user";
+import { Borrow } from "../models/borrow";
 
 
 export const getUser = async (req: any, res: Response) => {
@@ -62,22 +63,42 @@ export const updateUserByAdmin = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const deleteUser = async (
+  req: Request,
+  res: Response
+) => {
 
-export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.id;
 
-    const user = await User.findById(userId);
+    const id = req.params.id;
+
+    // 👤 kullanıcı var mı
+    const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).json({ message: "Kullanıcı bulunamadı" });
+      return res.status(404).json({
+        message: "Kullanıcı bulunamadı",
+      });
     }
 
-    await User.findByIdAndDelete(userId);
+    // 📦 borrow kayıtlarını sil
+    await Borrow.deleteMany({
+      userId: id,
+    });
 
-    res.json({ message: "Kullanıcı silindi" });
+    // 👤 kullanıcıyı sil
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      message: "Kullanıcı ve borrow kayıtları silindi",
+    });
+
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+
+    return res.status(500).json({
+      message: error.message,
+    });
+
   }
 };
 export const resetScore = async (req: any, res: Response) => {

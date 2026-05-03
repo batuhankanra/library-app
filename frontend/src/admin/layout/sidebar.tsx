@@ -1,7 +1,7 @@
 import { NavLink } from "react-router";
 
 const menu = [
-  { name: "Dashboard", path: "/admin/" },
+  { name: "Anasayfa", path: "/admin/" },
   { name: "Kitaplar", path: "/admin/book" },
   { name: "Kullanıcılar", path: "/admin/user" },
   { name: "Siparişler", path: "/admin/borrow" },
@@ -16,18 +16,17 @@ const AdminSidebar = () => {
       <nav className="flex flex-col gap-2">
         {menu.map((item) => (
           <NavLink
-            key={item.name}
-            to={item.path}
-            className={({ isActive }) =>
-              `px-3 py-2 rounded-md text-sm transition ${
-                isActive
-                  ? "bg-indigo-500"
-                  : "hover:bg-gray-800"
-              }`
-            }
-          >
-            {item.name}
-          </NavLink>
+  key={item.name}
+  to={item.path}
+  end={item.path === "/admin/"}   // 🔥 kritik fix
+  className={({ isActive }) =>
+    `px-3 py-2 rounded-md text-sm transition ${
+      isActive ? "bg-indigo-500" : "hover:bg-gray-800"
+    }`
+  }
+>
+  {item.name}
+</NavLink>
         ))}
       </nav>
     </aside>

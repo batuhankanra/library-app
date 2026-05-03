@@ -46,7 +46,7 @@ const Navbar = () => {
         
         {/* LOGO */}
         <Link to="/" className="text-xl font-bold whitespace-nowrap">
-          📚 Yağmur Kalp
+          📚 Kütüphane
         </Link>
 
         {/* DESKTOP MENU */}

@@ -79,7 +79,7 @@ const Banner = () => {
               </p>
 
               <Link
-                to="/books"
+                to="/book"
                 className="bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded transition"
               >
                 Keşfet

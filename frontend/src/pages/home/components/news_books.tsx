@@ -21,7 +21,7 @@ const NewBooks = () => {
       <h2 className="text-xl font-bold">🆕 Yeni Eklenen Kitaplar</h2>
 
      
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-3">
           {sortedBooks.map((book) => (
             <Card book={book} key={book._id}    />
           ))}

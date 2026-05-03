@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Banner from './components/banner'
-import FeaturedBooks from './components/featured_books'
 import Announcements from './components/announcements'
 import NewBooks from './components/news_books'
 import { useAppDispatch } from '../../store/app_hook'
@@ -32,7 +31,6 @@ const Home:React.FC = () => {
 
       
       <Banner />
-      <FeaturedBooks />
       <NewBooks />
       <Announcements />
     </div>

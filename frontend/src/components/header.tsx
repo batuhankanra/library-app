@@ -98,9 +98,9 @@ const Navbar = () => {
                     Yönetim bölümü
                   </Link>
                   )}
-                  <button className="w-full text-left px-4 py-2 text-sm hover:text-black transition-all cursor-pointer hover:text-base duration-200">
+                  <Link to={"/profile"} className="w-full block text-left px-4 py-2 text-sm hover:text-black transition-all cursor-pointer hover:text-base duration-200">
                     Profil
-                  </button>
+                  </Link>
 
                   <button className="w-full text-left px-4 py-2 text-sm hover:text-black transition-colors cursor-pointer hover:text-base duration-200">
                     Ayarlar

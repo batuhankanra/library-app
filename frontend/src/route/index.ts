@@ -18,6 +18,7 @@ import EditUser from "../admin/page/user/edit";
 import AdminBorrows from "../admin/page/borrow";
 import Delivery from "../admin/page/borrow/delivery";
 import Order from "../admin/page/borrow/order";
+import Profile from "../pages/profile";
 
 const router =createBrowserRouter([
     {
@@ -35,6 +36,10 @@ const router =createBrowserRouter([
             {
                 path:"book/:id",
                 Component:BookDetail
+            },
+            {
+                path:"profile",
+                Component:Profile
             },
             {
                 path:"/*",

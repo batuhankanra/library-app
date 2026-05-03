@@ -1,12 +1,11 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import * as borrowService from "../services/borrow";
 
 export const borrow = async (req: any, res: Response) => {
   try {
-    const bookId = req.params.id;
-    const userId = req.user.userId; 
+    const {bookId,email} = req.body;
 
-    const result = await borrowService.borrowBook(bookId, userId);
+    const result = await borrowService.borrowBook(bookId, email);
 
     res.json(result);
   } catch (error: any) {
@@ -15,18 +14,36 @@ export const borrow = async (req: any, res: Response) => {
 };
 
 
-export const returnBook = async (req: any, res: Response) => {
+export const returnBook = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const bookId = req.params.id;
-    const userId = req.user.userId;
+    const { bookId, email } = req.body;
 
-    const result = await borrowService.returnBook(bookId, userId);
+    const result = await borrowService.returnBook(
+      bookId,
+      email
+    );
 
-    res.status(200).json({
-      message: "Kitap iade edildi",
-      data: result,
-    });
+    res.json(result);
+
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      message: error.message,
+    });
   }
 };
+
+export const getAllOrders = async (req: Request,res: Response) => {
+  try {
+    const borrows = await borrowService.getAllBorrows();
+
+     res.json(borrows);
+  } catch (error: any) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+

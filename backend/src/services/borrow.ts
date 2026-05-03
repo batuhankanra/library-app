@@ -2,11 +2,13 @@ import { Book } from "../models/book";
 import { Borrow } from "../models/borrow";
 import { User } from "../models/user";
 
-export const borrowBook = async (bookId: string, userId: string) => {
+export const borrowBook = async (bookId: string, email: string) => {
   const book = await Book.findById(bookId);
 
   if (!book) throw new Error("Kitap bulunamadı");
-  if (book.status !== "AVAILABLE") throw new Error("Kitap alınamaz");
+  if (book.status !== "available") throw new Error("Kitap alınamaz");
+  const user =await User.findOne({email})
+  if (!user) return new Error("Kullanıcı bulunamedı")
 
   book.status = "BORROWED";
   await book.save();
@@ -16,7 +18,7 @@ export const borrowBook = async (bookId: string, userId: string) => {
 
   const borrow = await Borrow.create({
     bookId,
-    userId,
+    userId:user._id,
     borrowDate: new Date(),
     dueDate,
   });
@@ -24,49 +26,89 @@ export const borrowBook = async (bookId: string, userId: string) => {
   return borrow;
 };
 
-export const returnBook = async (bookId: string, userId: string) => {
-  const book = await Book.findById(bookId);
-  if (!book) throw new Error("Kitap bulunamadı");
+export const returnBook = async (
+  bookId: string,
+  email: string
+) => {
 
+  const book = await Book.findById(bookId);
+
+  if (!book) {
+    throw new Error("Kitap bulunamadı");
+  }
+   const user = await User.findOne({email});
+
+  if (!user) {
+    throw new Error("Kullanıcı bulunamadı");
+  }
   const borrow = await Borrow.findOne({
     bookId,
-    userId,
+    userId:user._id,
     returnDate: null,
   });
 
   if (!borrow) {
-    throw new Error("Bu kitap kullanıcıda değil");
+    throw new Error("Aktif ödünç kaydı bulunamadı");
   }
+
+ 
 
   const now = new Date();
 
-  let penaltyPointsToAdd = 0;
-  let debtToAdd = 0;
+  // iade tarihi
+  borrow.returnDate = now;
 
-  if (now > borrow.dueDate) {
-    const diffTime = now.getTime() - borrow.dueDate.getTime();
-    const daysLate = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  // kitap tekrar available
+  book.status = "available";
 
-    penaltyPointsToAdd = daysLate * 5;
-    debtToAdd = Math.floor(penaltyPointsToAdd / 10) * 10;
+  // 🔥 score hesaplama
+  const dueDate = new Date(borrow.dueDate);
+
+  const diffMs = now.getTime() - dueDate.getTime();
+
+  // kaç gün geç
+  const lateDays = Math.ceil(
+    diffMs / (1000 * 60 * 60 * 24)
+  );
+
+  let scoreChange = 0;
+
+  // zamanında teslim
+  if (lateDays <= 0) {
+    scoreChange = 1;
+  } else {
+    // geç teslim
+    scoreChange = -lateDays;
   }
 
-  book.status = "AVAILABLE";
-  await book.save();
+  // user score güncelle
+  user.score += scoreChange;
 
-  borrow.returnDate = now;
+  // save işlemleri
+  await user.save();
+  await book.save();
   await borrow.save();
-  
-  await User.findByIdAndUpdate(userId, {
-    $inc: {
-      penaltyPoints: penaltyPointsToAdd,
-      debt: debtToAdd,
-    },
-  });
 
   return {
     borrow,
-    penaltyPointsAdded: penaltyPointsToAdd,
-    debtAdded: debtToAdd,
+    scoreChange,
+    currentScore: user.score,
   };
+};
+
+export const getAllBorrows = async () => {
+  const borrows = await Borrow.find()
+    .populate("userId", "name email")
+    .populate("bookId", "title author image")
+    .sort({ createdAt: -1 });
+
+  return borrows.map((borrow) => {
+    const isLate =
+      !borrow.returnDate && new Date() > new Date(borrow.dueDate);
+
+    return {
+      ...borrow.toObject(),
+      isLate,
+    };
+  });
 };

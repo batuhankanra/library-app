@@ -80,3 +80,17 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const resetScore = async (req: any, res: Response) => {
+  try {
+    const userId = req.params.id;
+
+    const result = await adminService.userScoreReset(userId);
+
+    res.json(result);
+
+  } catch (error: any) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+};

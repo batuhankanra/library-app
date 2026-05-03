@@ -8,6 +8,7 @@ import {
 
 const AdminUsers = () => {
   const dispatch = useAppDispatch();
+
   const { users, isLoading, error } = useAppSelector(
     (state) => state.user_slice
   );
@@ -19,23 +20,32 @@ const AdminUsers = () => {
   // 🔥 DATE FORMAT
   const formatDate = (date?: string) => {
     if (!date) return "-";
-    return new Date(date).toLocaleString("tr-TR", {
+
+    return new Date(date).toLocaleDateString("tr-TR", {
       day: "2-digit",
-      month: "short",
+      month: "long",
       year: "numeric",
     });
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Kullanıcı silinsin mi?")) {
+    const ok = window.confirm(
+      "Bu kullanıcı silinsin mi?"
+    );
+
+    if (ok) {
       dispatch(deleteUser(id));
     }
   };
 
-  const handleRoleChange = (id: string, role: string) => {
+  const handleRoleChange = (
+    id: string,
+    role: string
+  ) => {
     dispatch(updateUserRole({ id, role }));
   };
 
+  // 🔄 loading
   if (isLoading) {
     return (
       <div className="flex justify-center py-20">
@@ -44,63 +54,110 @@ const AdminUsers = () => {
     );
   }
 
+  // ❌ error
   if (error) {
     return (
-      <p className="text-red-500 text-center py-10">{error}</p>
+      <div className="text-center py-20 text-red-500">
+        {error}
+      </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      
+
       {/* HEADER */}
-      <h1 className="text-2xl font-bold">Kullanıcı Yönetimi</h1>
+      <div>
+        <h1 className="text-2xl font-bold">
+          Kullanıcı Yönetimi
+        </h1>
+
+        <p className="text-sm text-gray-500 mt-1">
+          Toplam kullanıcı: {users.length}
+        </p>
+      </div>
 
       {/* TABLE */}
-      <div className="bg-white rounded-xl shadow overflow-x-auto">
+      <div className="bg-white rounded-2xl shadow overflow-x-auto">
+
         <table className="w-full text-sm">
-          
+
           <thead className="bg-gray-100 text-left">
             <tr>
-              <th className="p-3">Ad</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Rol</th>
-              <th className="p-3">Kayıt Tarihi</th>
-              <th className="p-3">İşlemler</th>
+              <th className="p-4">Ad</th>
+              <th className="p-4">Email</th>
+              <th className="p-4">Rol</th>
+              <th className="p-4">Puan</th>
+              <th className="p-4">Kayıt Tarihi</th>
+              <th className="p-4 text-right">
+                İşlem
+              </th>
             </tr>
           </thead>
 
           <tbody>
             {users.map((user) => (
-              <tr key={user._id} className="border-t">
-                
-                <td className="p-3 font-medium">{user.name}</td>
-                <td className="p-3 text-gray-600">{user.email}</td>
+              <tr
+                key={user._id}
+                className="border-t hover:bg-gray-50 transition"
+              >
+
+                {/* NAME */}
+                <td className="p-4 font-medium">
+                  {user.name}
+                </td>
+
+                {/* EMAIL */}
+                <td className="p-4 text-gray-600">
+                  {user.email}
+                </td>
 
                 {/* ROLE */}
-                <td className="p-3">
+                <td className="p-4">
                   <select
                     value={user.role}
                     onChange={(e) =>
-                      handleRoleChange(user._id, e.target.value)
+                      handleRoleChange(
+                        user._id,
+                        e.target.value
+                      )
                     }
-                    className="border px-2 py-1 rounded text-sm"
+                    className="border px-2 py-1 rounded-lg text-sm"
                   >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
+                    <option value="user">
+                      User
+                    </option>
+                    <option value="admin">
+                      Admin
+                    </option>
                   </select>
                 </td>
 
+                {/* SCORE */}
+                <td className="p-4">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      user.score > 0
+                        ? "bg-red-100 text-red-600"
+                        : "bg-green-100 text-green-600"
+                    }`}
+                  >
+                    {user.score ?? 0}
+                  </span>
+                </td>
+
                 {/* DATE */}
-                <td className="p-3">
+                <td className="p-4 text-gray-500">
                   {formatDate(user.createdAt)}
                 </td>
 
                 {/* ACTION */}
-                <td className="p-3">
+                <td className="p-4 text-right">
                   <button
-                    onClick={() => handleDelete(user._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition"
+                    onClick={() =>
+                      handleDelete(user._id)
+                    }
+                    className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-600 transition"
                   >
                     Sil
                   </button>
@@ -111,6 +168,7 @@ const AdminUsers = () => {
           </tbody>
 
         </table>
+
       </div>
     </div>
   );

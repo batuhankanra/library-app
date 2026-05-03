@@ -15,6 +15,7 @@ import AddBook from "../admin/page/book/book_add";
 import EditBook from "../admin/page/book/book_edit";
 import AdminUsers from "../admin/page/user";
 import EditUser from "../admin/page/user/edit";
+import AdminBorrows from "../admin/page/borrow";
 
 const router =createBrowserRouter([
     {
@@ -80,7 +81,7 @@ const router =createBrowserRouter([
             },
             {
                 path:"borrow",
-                element:"borrow"
+                Component:AdminBorrows
             }
         ]
     }

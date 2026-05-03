@@ -13,6 +13,7 @@ const BookDetail = () => {
   const { selectedBook, isLoading } = useAppSelector(
     (state) => state.book_slice
   );
+  const {user}=useAppSelector((s)=>s.auth_slice)
 
   const [days, setDays] = useState(7);
 
@@ -50,7 +51,12 @@ const BookDetail = () => {
 
   // 🔹 borrow
   const handleBorrow = () => {
-    dispatch(borrowBook(selectedBook._id));
+    dispatch(
+    borrowBook({
+        bookId: selectedBook._id,
+        email: user?.email,
+      })
+    );
   };
 
   // 🔹 return

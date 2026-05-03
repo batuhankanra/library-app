@@ -7,8 +7,7 @@ export interface IUser extends mongoose.Document {
   email: string;
   password: string;
   role: UserRole;
-  penaltyPoints: number;   
-  debt: number;            
+  score:number
 }
 
 const userSchema = new mongoose.Schema(
@@ -21,8 +20,10 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-    penaltyPoints: { type: Number, default: 0 },
-    debt: { type: Number, default: 0 },      
+    score:{
+      type:Number,
+      default:0
+    }
     
   },
   { timestamps: true }

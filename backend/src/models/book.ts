@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export type BookStatus = "AVAILABLE" | "BORROWED" | "NOT_AVAILABLE";
+export type BookStatus = "available" | "BORROWED" | "NOT_AVAILABLE";
 
 export interface IBook extends mongoose.Document {
   title: string;
@@ -17,8 +17,8 @@ const bookSchema = new mongoose.Schema(
     isbn: { type: String, required: true, unique: true },
     status: {
       type: String,
-      enum: ["AVAILABLE", "BORROWED", "NOT_AVAILABLE"],
-      default: "AVAILABLE",
+      enum: ["available", "BORROWED", "NOT_AVAILABLE"],
+      default: "available",
     },
     image: { type: String, default: "" },
   },

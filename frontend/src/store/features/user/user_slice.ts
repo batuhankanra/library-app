@@ -9,10 +9,7 @@ export interface User {
   role: "user" | "admin";
 
   // stats
-  activeBorrows: number;
-  lateBorrows: number;
-  penaltyPoints: number;
-  debt: number;
+  score:number;
 
   createdAt?: string;
 }
@@ -20,21 +17,7 @@ export interface User {
 // 🔹 BACKEND RESPONSE
 interface UsersResponse {
   totalUsers: number;
-  users: {
-    user: {
-      _id: string;
-      name: string;
-      email: string;
-      role: "user" | "admin";
-      createdAt: string;
-    };
-    stats: {
-      activeBorrows: number;
-      lateBorrows: number;
-      penaltyPoints: number;
-      debt: number;
-    };
-  }[];
+  users: User[];
 }
 
 // 🔹 STATE
@@ -60,15 +43,8 @@ export const getUsers = createAsyncThunk<
 >("users/getUser", async (_, thunkAPI) => {
   try {
     const res = await api.get<UsersResponse>("/user");
-
-    // 🔥 flatten
-    const formattedUsers: User[] = res.data.users.map((item) => ({
-      ...item.user,
-      ...item.stats,
-    }));
-
     return {
-      users: formattedUsers,
+      users: res.data.users,
       totalUsers: res.data.totalUsers,
     };
   } catch {

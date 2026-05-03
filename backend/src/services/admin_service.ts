@@ -4,32 +4,9 @@ import { Borrow } from "../models/borrow";
 export const getUsersWithPenalties = async () => {
   const users = await User.find().select("-password");
 
-  const result = await Promise.all(
-    users.map(async (user) => {
-      const activeBorrows = await Borrow.countDocuments({
-        userId:user._id ,
-        returnDate: null,
-      });
+  
 
-      const lateBorrows = await Borrow.countDocuments({
-        userId: user._id,
-        returnDate: null,
-        dueDate: { $lt: new Date() },
-      });
-
-      return {
-        user,
-        stats: {
-          activeBorrows,
-          lateBorrows,
-          penaltyPoints: user.penaltyPoints,
-          debt: user.debt,
-        },
-      };
-    })
-  );
-
-  return result;
+  return users;
 };
 
 export const getUserOne=async (id:string)=>{
@@ -37,4 +14,15 @@ export const getUserOne=async (id:string)=>{
     "_id":id
   })
   return user_one
+}
+
+export const userScoreReset=async (id:string)=>{
+  const user =await User.findById(id);
+  if (!user){
+    return new Error("Kullanıcı bulunamadı");
+  }
+  user.score=0;
+  await user.save;
+  return {message:"Ceza puanı sıfırlandı"}
+
 }

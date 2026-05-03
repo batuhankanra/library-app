@@ -1,12 +1,14 @@
 import { Router } from "express";
-import { borrow, returnBook } from "../controllers/borrow.controller";
+import { borrow, getAllOrders, returnBook } from "../controllers/borrow.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import { requireRole } from "../middlewares/role";
 
 
 
 const router = Router();
-router.post("/:id", authMiddleware, borrow);
+router.post("/", authMiddleware,requireRole("admin"), borrow);
 
-router.post("/:id/return", authMiddleware, returnBook);
+router.post("/return", authMiddleware,requireRole("admin"), returnBook);
+router.get("/",authMiddleware,requireRole("admin"),getAllOrders);
 
 export default router

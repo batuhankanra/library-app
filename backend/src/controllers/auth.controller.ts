@@ -65,10 +65,6 @@ export const getMyProfile = async (req: any, res: Response) => {
 
     res.json({
       user,
-      penalty: {
-        penaltyPoints: user.penaltyPoints,
-        debt: user.debt,
-      },
       activeBorrows,
       history,
     });

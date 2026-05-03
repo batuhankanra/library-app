@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getBorrows } from "../../../store/features/borrow/borrow_slice"; 
 import { useAppDispatch, useAppSelector } from "../../../store/app_hook";
+import { Link } from "react-router";
 
 const AdminBorrow = () => {
   const dispatch = useAppDispatch();
@@ -233,8 +234,6 @@ const AdminBorrow = () => {
 
                   </div>
                 </td>
-
-                {/* USER */}
                 <td className="p-4">
                   <p className="font-medium">
                     {borrow.userId.name}
@@ -276,9 +275,19 @@ const AdminBorrow = () => {
                       {getDaysLeft(borrow.dueDate)} gün kaldı
                     </span>
                   ) : (
-                    <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">
-                      Devam Ediyor
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">
+                        Devam Ediyor
+                      </span>
+
+                      <Link
+                        to={`/admin//borrow-delivery/${borrow.bookId._id}`}
+                        className="text-xs bg-black text-white px-3 py-1 rounded-full hover:opacity-90 transition"
+                      >
+                        Teslim Al
+                      </Link>
+
+                    </div>
                   )}
 
                 </td>

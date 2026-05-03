@@ -81,6 +81,19 @@ export const updateUserRole = createAsyncThunk<
     return thunkAPI.rejectWithValue("Rol güncellenemedi");
   }
 });
+export const resetUserScore = createAsyncThunk(
+  "user/resetUserScore",
+  async (id: string, thunkAPI) => {
+    try {
+      const res = await api.patch(`/user/reset/${id}`);
+      return res.data;
+    } catch {
+      return thunkAPI.rejectWithValue(
+        "Puan sıfırlanamadı"
+      );
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: "user",
@@ -116,6 +129,15 @@ const userSlice = createSlice({
         );
         state.totalUsers -= 1;
       })
+      .addCase(resetUserScore.fulfilled, (state, action) => {
+  const index = state.users.findIndex(
+    (u) => u._id === action.payload._id
+  );
+
+  if (index !== -1) {
+    state.users[index] = action.payload;
+  }
+})
 
       // UPDATE ROLE
       .addCase(updateUserRole.fulfilled, (state, action) => {

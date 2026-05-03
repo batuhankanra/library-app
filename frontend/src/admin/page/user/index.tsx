@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../store/app_hook";
+
 import {
   getUsers,
   deleteUser,
   updateUserRole,
+  resetUserScore,
 } from "../../../store/features/user/user_slice";
 
 const AdminUsers = () => {
@@ -28,6 +30,7 @@ const AdminUsers = () => {
     });
   };
 
+  // 🔥 DELETE
   const handleDelete = (id: string) => {
     const ok = window.confirm(
       "Bu kullanıcı silinsin mi?"
@@ -38,11 +41,23 @@ const AdminUsers = () => {
     }
   };
 
+  // 🔥 ROLE
   const handleRoleChange = (
     id: string,
     role: string
   ) => {
     dispatch(updateUserRole({ id, role }));
+  };
+
+  // 🔥 RESET SCORE
+  const handleResetScore = (id: string) => {
+    const ok = window.confirm(
+      "Kullanıcının  puanı sıfırlansın mı?"
+    );
+
+    if (ok) {
+      dispatch(resetUserScore(id));
+    }
   };
 
   // 🔄 loading
@@ -87,10 +102,10 @@ const AdminUsers = () => {
               <th className="p-4">Ad</th>
               <th className="p-4">Email</th>
               <th className="p-4">Rol</th>
-              <th className="p-4">Puan</th>
+              <th className="p-4">Puanı</th>
               <th className="p-4">Kayıt Tarihi</th>
               <th className="p-4 text-right">
-                İşlem
+                İşlemler
               </th>
             </tr>
           </thead>
@@ -127,6 +142,7 @@ const AdminUsers = () => {
                     <option value="user">
                       User
                     </option>
+
                     <option value="admin">
                       Admin
                     </option>
@@ -135,15 +151,32 @@ const AdminUsers = () => {
 
                 {/* SCORE */}
                 <td className="p-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      user.score > 0
-                        ? "bg-red-100 text-red-600"
-                        : "bg-green-100 text-green-600"
-                    }`}
-                  >
-                    {user.score ?? 0}
-                  </span>
+
+                  <div className="flex items-center gap-2">
+
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        user.score > 0
+                          ? "bg-red-100 text-red-600"
+                          : "bg-green-100 text-green-600"
+                      }`}
+                    >
+                      {user.score ?? 0}
+                    </span>
+
+                    {user.score < 0 && (
+                      <button
+                        onClick={() =>
+                          handleResetScore(user._id)
+                        }
+                        className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 transition"
+                      >
+                        Sıfırla
+                      </button>
+                    )}
+
+                  </div>
+
                 </td>
 
                 {/* DATE */}
@@ -152,15 +185,21 @@ const AdminUsers = () => {
                 </td>
 
                 {/* ACTION */}
-                <td className="p-4 text-right">
-                  <button
-                    onClick={() =>
-                      handleDelete(user._id)
-                    }
-                    className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-600 transition"
-                  >
-                    Sil
-                  </button>
+                <td className="p-4">
+
+                  <div className="flex justify-end gap-2">
+
+                    <button
+                      onClick={() =>
+                        handleDelete(user._id)
+                      }
+                      className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-600 transition"
+                    >
+                      Sil
+                    </button>
+
+                  </div>
+
                 </td>
 
               </tr>

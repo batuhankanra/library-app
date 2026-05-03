@@ -87,12 +87,16 @@ export const borrowBook = createAsyncThunk<
 //
 export const returnBook = createAsyncThunk<
   Borrow,
-  string,
+  { bookId: string; email: string | undefined },
   { rejectValue: string }
->("borrow/returnBook", async (bookId, thunkAPI) => {
+>("borrow/returnBook", async ({bookId,email}, thunkAPI) => {
   try {
     const res = await api.post(
-      `/borrow/${bookId}/return`
+      "/borrow/return",
+      {
+        bookId,
+        email
+      }
     );
 
     return res.data;

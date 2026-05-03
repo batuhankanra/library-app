@@ -48,7 +48,6 @@ export const update = async (req: any, res: Response) => {
 
       imagePath = newImage;
     }
-    console.log(req.body)
     const updatedBook = await bookService.updateBook(id, {
       ...req.body,
       image: imagePath,

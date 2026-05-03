@@ -2,23 +2,52 @@ import { Book } from "../models/book";
 import { Borrow } from "../models/borrow";
 import { User } from "../models/user";
 
-export const borrowBook = async (bookId: string, email: string) => {
+export const borrowBook = async (
+  bookId: string,
+  email: string
+) => {
+
   const book = await Book.findById(bookId);
 
-  if (!book) throw new Error("Kitap bulunamadı");
-  if (book.status !== "available") throw new Error("Kitap alınamaz");
-  const user =await User.findOne({email})
-  if (!user) return new Error("Kullanıcı bulunamedı")
+  if (!book) {
+    throw new Error("Kitap bulunamadı");
+  }
 
+  // ⚠️ status kontrolü
+  if (book.status !== "available") {
+    throw new Error("Kitap alınamaz");
+  }
+
+  // 👤 kullanıcı
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error("Kullanıcı bulunamadı");
+  }
+
+  // 🚫 negatif score engeli
+  if (user.score < 0) {
+    throw new Error(
+      "Negatif puana sahip kullanıcı kitap alamaz"
+    );
+  }
+
+  // 📚 kitap ödünçte
   book.status = "BORROWED";
+
   await book.save();
 
+  // 📅 teslim tarihi
   const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 14)
 
+  dueDate.setDate(
+    dueDate.getDate() + 14
+  );
+
+  // 📦 borrow oluştur
   const borrow = await Borrow.create({
     bookId,
-    userId:user._id,
+    userId: user._id,
     borrowDate: new Date(),
     dueDate,
   });

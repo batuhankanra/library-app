@@ -1,5 +1,4 @@
 import { User } from "../models/user";
-import { Borrow } from "../models/borrow";
 
 export const getUsersWithPenalties = async () => {
   const users = await User.find().select("-password");
@@ -22,7 +21,7 @@ export const userScoreReset=async (id:string)=>{
     return new Error("Kullanıcı bulunamadı");
   }
   user.score=0;
-  await user.save;
+  await user.save();
   return {message:"Ceza puanı sıfırlandı"}
 
 }

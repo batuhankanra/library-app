@@ -18,7 +18,8 @@ import EditUser from "../admin/page/user/edit";
 import AdminBorrows from "../admin/page/borrow";
 import Delivery from "../admin/page/borrow/delivery";
 import Order from "../admin/page/borrow/order";
-import Profile from "../pages/profile";
+import ProfilePage from "../pages/profile";
+import About from "../pages/about";
 
 const router =createBrowserRouter([
     {
@@ -39,7 +40,11 @@ const router =createBrowserRouter([
             },
             {
                 path:"profile",
-                Component:Profile
+                Component:ProfilePage
+            },
+            {
+                path:"about",
+                Component:About
             },
             {
                 path:"/*",

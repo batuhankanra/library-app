@@ -1,0 +1,2 @@
+yapılcak listesi 
+- profil bölümü

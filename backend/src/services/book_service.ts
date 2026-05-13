@@ -4,7 +4,6 @@ export const createBook = async (data: any,image:string) => {
   return await Book.create({
     ...data,
     image,
-    status: "available",
   });
 };
 
